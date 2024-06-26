@@ -71,9 +71,10 @@ def main():
     if 'logged_in' not in st.session_state:
         st.session_state['logged_in'] = False
 
-    if st.session_state['logged_in']:
+    if st.session_state['logged_in'] and is_session_active(st.session_state['username'],st.session_state['session_id']):
+        st.write(has_session_expired(st.session_state['username']))
         st.write(f"Welcome {st.session_state['username']}!")
-        update_last_activity(st.session_state['username'])
+        
         if st.button("Logout"):
             logout()
         if 'counter' not in st.session_state:
@@ -81,6 +82,11 @@ def main():
         if st.button("Click me"):
             st.session_state['counter']=st.session_state['counter']+1
             st.write(str(st.session_state['counter']))
+            #update_last_activity(st.session_state['username'])
+            session_store = get_active_sessions()
+            session_id = session_store.get(st.session_state['username'], {}).get('session_id')
+            st.write(session_store)
+            st.write(st.session_state)
 
     else:
         username = st.text_input("Username", key="username_input")
